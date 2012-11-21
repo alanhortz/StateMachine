@@ -185,5 +185,7 @@ var myPlayer = cassettePlayer();
 
 myPlayer.powerBut();
 myPlayer.playBut();
-myPlayer.stopBut();
 myPlayer.powerBut();
+myPlayer.powerBut();
+myPlayer.playBut();
+myPlayer.stopBut();
