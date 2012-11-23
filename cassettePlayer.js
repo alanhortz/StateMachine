@@ -51,7 +51,8 @@ var genericState = function (my) {
 		exit = function () { console.log('exit called'); },
 		stopBut = function () {},
 		playBut = function () {},
-		powerBut = function () {};
+		powerBut = function () {},
+		speakerBut = function () {};
 
 	that.entry = entry;
 	that.exit = exit;
@@ -77,9 +78,21 @@ var powerOn = function (my) {
 			my.state = my.powerOff;
 		};
 
+	that.speakerState = {}; // Is it really necessary ??
+	that.playerState = {}; // Is it really necessary ??
+	that.speakerBut = function () {
+		that.speakerState.speakerBut();
+	};
+	that.playBut = function () {
+		that.playerState.playBut();
+	};
+	that.stopBut = function () {
+		that.playerState.stopBut();
+	};
 
 	that.exit = exit;
 	that.powerBut = powerBut;
+
 
 	that.get_name = function () {
 		return name;
@@ -94,6 +107,8 @@ var powerOff = function (my) {
 		exit = function () {},
 		powerBut = function () {
 			my.state = my.powerOnHistory;
+			my.state.speakerState = my.speakerHistory;
+			my.state.playerState = my.playerHistory;
 		};
 
 	that.exit = exit;
@@ -105,10 +120,22 @@ var powerOff = function (my) {
 
 	return that;
 };
+var player = function (my) {
+	var name = 'Player',
+		that = powerOn(my),
+		exit = function () {};
 
+	that.exit = exit;
+
+	that.get_name = function () {
+		return name;
+	};
+
+	return that;
+};
 var playState = function (my) {
 	var name = 'Play',
-		that = powerOn(my),
+		that = player(my),
 		exit = function () {}; // Ajouter l'appel à la super méthode !!! pour surcharger !
 
 	that.exit = exit;
@@ -119,9 +146,9 @@ var playState = function (my) {
 
 	that.stopBut = function () {
 		exit();
-		my.state = my.stopState;
-		my.state.entry();
-	};	
+		my.state.playerState = my.stopState;
+		my.state.playerState.entry();
+	};
 
 	return that;
 
@@ -129,7 +156,7 @@ var playState = function (my) {
 
 var stopState = function (my) {
 	var name = 'Stop',
-		that = powerOn(my),
+		that = player(my),
 		exit = function () {}; // Ajouter l'appel à la super méthode !!! pour surcharger !
 
 	that.exit = exit;
@@ -140,11 +167,66 @@ var stopState = function (my) {
 
 	that.playBut = function () {
 		exit();
-		my.state = my.playState;
-		my.state.entry();
+		my.state.playerState = my.playState;
+		my.state.playerState.entry();
 	};
 
-	return that;		
+	return that;
+};
+
+var speaker = function (my) {
+	var name = 'Speaker',
+		that = powerOn(my),
+		exit = function () {};
+
+	that.exit = exit;
+
+	that.get_name = function () {
+		return name;
+	};
+
+	return that;
+};
+
+
+
+var leftState = function (my) {
+	var name = 'LeftState',
+		that = speaker(my),
+		exit = function () {};
+
+	that.exit = exit;
+
+	that.get_name = function () {
+		return name;
+	};
+
+	that.speakerBut = function () {
+		exit();
+		my.state.speakerState = my.rightState;
+		my.state.speakerState.entry();
+	};
+
+	return that;
+};
+
+var rightState = function (my) {
+	var name = 'RightState',
+		that = speaker(my),
+		exit = function () {};
+
+	that.get_name = function () {
+		return name;
+	};
+
+	that.speakerBut = function () {
+		exit();
+		my.state.speakerState = my.leftState;
+		my.state.speakerState.entry();
+	};
+
+
+	return that;
 };
 
 var cassettePlayer = function (spec, my) {
@@ -152,12 +234,17 @@ var cassettePlayer = function (spec, my) {
 
 
 	my.powerOff = powerOff(my);
+	my.powerOn = powerOn(my);
 	my.playState = playState(my);
 	my.stopState = stopState(my);
+	my.leftState = leftState(my);
+	my.rightState = rightState(my);
 
-	my.powerOnHistory = my.stopState;
+	my.powerOnHistory = my.powerOn;
+	my.speakerHistory = my.leftState;
+	my.playerHistory = my.stopState;
 
-	my.state = 	my.powerOff;
+	my.state = my.powerOff;
 
 	var that = {};
 
@@ -169,6 +256,9 @@ var cassettePlayer = function (spec, my) {
 	};
 	that.powerBut = function () {
 		my.state.powerBut();
+	};
+	that.speakerBut = function () {
+		my.state.speakerBut();
 	};
 
 	my.stopPlay = function () {};
@@ -188,4 +278,6 @@ myPlayer.playBut();
 myPlayer.powerBut();
 myPlayer.powerBut();
 myPlayer.playBut();
+myPlayer.speakerBut();
+myPlayer.speakerBut();
 myPlayer.stopBut();
