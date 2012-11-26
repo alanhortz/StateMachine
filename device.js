@@ -4,6 +4,10 @@ var deviceState = function (my) {
 	var name = 'Generic',
 		that = {};	
 
+	that.get_name = function () {
+		return name;
+	};
+
 	return that;	
 }; 
 
@@ -17,6 +21,10 @@ var setupState = function (my) {
 		my.state.b = my.b1state;
 	};
 
+	that.get_name = function () {
+		return name;
+	};	
+
 	return that;
 };
 
@@ -28,12 +36,15 @@ var processingState = function (my) {
 	that.b = {}; 
 
 	that.adone = function () {
-		a.adone();
+		that.a.adone();
 	};
 	that.bdone = function () {
-		b.done();
+		that.b.bdone();
 	};
 
+	that.get_name = function () {
+		return name;
+	};
 	return that;
 };
 
@@ -41,12 +52,20 @@ var processAState = function (my) {
 	var name = 'ProcessA',
 		that = processingState(my);
 
+	that.get_name = function () {
+		return name;
+	};
+
 	return that;
 };
 
 var processBState = function (my) {
 	var name = 'ProcessB',
 		that = processingState(my);
+
+	that.get_name = function () {
+		return name;
+	};
 
 	return that;	
 }; 
@@ -59,6 +78,10 @@ var a1State = function (my) {
 		my.state.a = my.a2State;
 		my.state.a.entry();
 	};	
+
+	that.get_name = function () {
+		return name;
+	};
 
 	return that;
 };
@@ -74,6 +97,10 @@ var a2State = function (my) {
 
 	};
 
+	that.get_name = function () {
+		return name;
+	};
+
 	return that;
 };
 
@@ -84,6 +111,10 @@ var b1State = function (my) {
 	that.bdone = function () {
 		my.state.b = my.b2State;
 		my.state.b.entry();
+	};
+
+	that.get_name = function () {
+		return name;
 	};
 
 	return that;
@@ -99,6 +130,10 @@ var b2State = function (my) {
 		}
 	};	
 
+	that.get_name = function () {
+		return name;
+	};
+
 	return that;
 };
 
@@ -106,6 +141,42 @@ var cleanupState = function (my) {
 	var name = 'Cleanup',
 		that = deviceState(my);
 
+	that.get_name = function () {
+		return name;
+	};
+
 	return that;
 };
 
+var device = function (spec, my) {
+	my = my || {};
+
+	my.setupState = setupState(my);
+	my.cleanupState = cleanupState(my);
+	my.processingState = processingState(my);
+	my.a1State = a1State(my);
+	my.a2State = a2State(my);
+	my.b1state = b1State(my);
+	my.b2State = b2State(my);
+
+	my.state = my.setupState;
+
+	that = {};
+
+	that.start = function () {
+		my.state.start();
+	};
+	that.adone = function () {
+		my.state.adone();
+	};
+	that.bdone = function () {
+		my.state.bdone();
+	};
+
+	return that;
+};
+
+var myDevice = device();
+myDevice.start();
+myDevice.adone();
+myDevice.bdone();
