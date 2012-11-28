@@ -1,19 +1,21 @@
 var deviceState = function (my) {
 	my = my || {};
 
-	var name = 'Generic',
-		that = {};	
+	var that = {};	
+
+	that.name = 'AbstractState';
 
 	that.get_name = function () {
-		return name;
+		return that.name;
 	};
 
 	return that;	
 }; 
 
 var setupState = function (my) {
-	var name = 'Setup',
-		that = deviceState(my);
+	var that = deviceState(my);
+
+	that.name = 'Setup';
 
 	that.start = function () {
 		my.state = my.processingState;
@@ -21,16 +23,13 @@ var setupState = function (my) {
 		my.state.b = my.b1state;
 	};
 
-	that.get_name = function () {
-		return name;
-	};	
-
 	return that;
 };
 
 var processingState = function (my) {
-	var name = 'Processing',
-		that = deviceState(my);
+	var that = deviceState(my);
+
+	that.name = 'Processing';
 
 	that.a = {}; // Is it really necessary ? How to deal with unassigned substates ?	
 	that.b = {}; 
@@ -42,108 +41,80 @@ var processingState = function (my) {
 		that.b.bdone();
 	};
 
-	that.get_name = function () {
-		return name;
-	};
 	return that;
 };
 
 var processAState = function (my) {
-	var name = 'ProcessA',
-		that = processingState(my);
-
-	that.get_name = function () {
-		return name;
-	};
-
+	var that = processingState(my);
+	that.name = 'ProcessA';
 	return that;
 };
 
 var processBState = function (my) {
-	var name = 'ProcessB',
-		that = processingState(my);
-
-	that.get_name = function () {
-		return name;
-	};
-
+	var that = processingState(my);
+	that.name = 'ProcessB';
 	return that;	
 }; 
 
 var a1State = function (my) {
-	var name = 'A1',
-		that = processAState(my);
+	var that = processAState(my);
+
+	that.name = 'A1';
 
 	that.adone = function () {
 		my.state.a = my.a2State;
 		my.state.a.entry();
 	};	
 
-	that.get_name = function () {
-		return name;
-	};
-
 	return that;
 };
 
 var a2State = function (my) {
-	var name = 'A2',
-		that = processBState(my);
+	var that = processBState(my);
+
+	that.name = 'A2';
 
 	that.entry = function () {
-		if (my.state.b.get_name() === 'B2') {
+		if (my.state.b.get_name() === my.b2State) {
 			my.state = my.cleanupState;
 		}
 
-	};
-
-	that.get_name = function () {
-		return name;
 	};
 
 	return that;
 };
 
 var b1State = function (my) {
-	var name = 'B1',
-		that = processBState(my);
+	var that = processBState(my);
+
+	that.name = 'B1';
 
 	that.bdone = function () {
 		my.state.b = my.b2State;
 		my.state.b.entry();
 	};
 
-	that.get_name = function () {
-		return name;
-	};
-
 	return that;
 };
 
 var b2State = function (my) {
-	var name = 'B2',
-		that = processBState(my);
+	var that = processBState(my);
+
+	that.name = 'B2';
 
 	that.entry = function () {
-		if (my.state.a.get_name() === 'A2') {
+		if (my.state.a.get_name() === my.a2State) {
 			my.state = my.cleanupState;
 		}
 	};	
-
-	that.get_name = function () {
-		return name;
-	};
 
 	return that;
 };
 
 var cleanupState = function (my) {
-	var name = 'Cleanup',
-		that = deviceState(my);
+	var that = deviceState(my);
 
-	that.get_name = function () {
-		return name;
-	};
+	that.name = 'Cleanup';
 
 	return that;
 };
