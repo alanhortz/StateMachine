@@ -75,7 +75,7 @@ var a2State = function (my) {
 	that.name = 'A2';
 
 	that.entry = function () {
-		if (my.state.b.get_name() === my.b2State) {
+		if (my.state.b === my.b2State) {
 			my.state = my.cleanupState;
 		}
 
@@ -103,7 +103,7 @@ var b2State = function (my) {
 	that.name = 'B2';
 
 	that.entry = function () {
-		if (my.state.a.get_name() === my.a2State) {
+		if (my.state.a === my.a2State) {
 			my.state = my.cleanupState;
 		}
 	};	
