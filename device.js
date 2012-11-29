@@ -1,16 +1,23 @@
 var deviceState = function (my) {
 	my = my || {};
 
-	var that = {};	
+	var that = {};
 
 	that.name = 'AbstractState';
+
+	that.entry = function () {
+		console.info('Entering ' + that.name);
+	};
+	that.exit = function () {
+		console.info('Exiting ' + that.name);
+	};
 
 	that.get_name = function () {
 		return that.name;
 	};
 
-	return that;	
-}; 
+	return that;
+};
 
 var setupState = function (my) {
 	var that = deviceState(my);
@@ -18,9 +25,11 @@ var setupState = function (my) {
 	that.name = 'Setup';
 
 	that.start = function () {
+		that.exit();
 		my.state = my.processingState;
 		my.state.a = my.a1State;
 		my.state.b = my.b1state;
+		my.state.entry();
 	};
 
 	return that;
@@ -32,7 +41,7 @@ var processingState = function (my) {
 	that.name = 'Processing';
 
 	that.a = {}; // Is it really necessary ? How to deal with unassigned substates ?	
-	that.b = {}; 
+	that.b = {};
 
 	that.adone = function () {
 		that.a.adone();
@@ -53,8 +62,8 @@ var processAState = function (my) {
 var processBState = function (my) {
 	var that = processingState(my);
 	that.name = 'ProcessB';
-	return that;	
-}; 
+	return that;
+};
 
 var a1State = function (my) {
 	var that = processAState(my);
@@ -62,9 +71,10 @@ var a1State = function (my) {
 	that.name = 'A1';
 
 	that.adone = function () {
+		my.state.a.exit();
 		my.state.a = my.a2State;
 		my.state.a.entry();
-	};	
+	};
 
 	return that;
 };
@@ -76,7 +86,9 @@ var a2State = function (my) {
 
 	that.entry = function () {
 		if (my.state.b === my.b2State) {
+			my.state.exit();
 			my.state = my.cleanupState;
+			my.state.entry();
 		}
 
 	};
@@ -90,6 +102,7 @@ var b1State = function (my) {
 	that.name = 'B1';
 
 	that.bdone = function () {
+		my.state.b.exit();
 		my.state.b = my.b2State;
 		my.state.b.entry();
 	};
@@ -104,9 +117,11 @@ var b2State = function (my) {
 
 	that.entry = function () {
 		if (my.state.a === my.a2State) {
+			my.state.exit();
 			my.state = my.cleanupState;
+			my.state.entry();
 		}
-	};	
+	};
 
 	return that;
 };
@@ -132,7 +147,7 @@ var device = function (spec, my) {
 
 	my.state = my.setupState;
 
-	that = {};
+	var that = {};
 
 	that.start = function () {
 		my.state.start();
@@ -149,5 +164,6 @@ var device = function (spec, my) {
 
 var myDevice = device();
 myDevice.start();
-myDevice.adone();
 myDevice.bdone();
+myDevice.adone();
+
