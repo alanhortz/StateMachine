@@ -1,5 +1,5 @@
 var eventuality = function (that) {
-	var registry = {};
+    var registry = {};
 
 	that.fire = function (event) {
 		var array,
@@ -114,8 +114,36 @@ var door = function (spec, my) {
 	my.openState = openState(spec, my);
 	my.closedState = closedState(spec, my);
 
-	my.state = my.openState;
-	my.locked = false;
+	if(spec && spec.state) {
+		switch(spec.state){
+			case 'open':
+				my.state = my.openState;
+				break;
+			case 'closed':
+				my.state = my.closedState;
+				break;
+			default:
+				my.state = my.openState;
+				break;	
+		};
+
+	} else {
+		my.state = my.openState;
+	};
+
+
+	if(spec && spec.locked) {
+		if(spec.locked === true) {
+			my.locked = true;
+		} else {
+			my.locked = false;
+		};
+	} else {
+		my.locked = false;
+	};
+
+	//my.state = my.openState;
+	//my.locked = false;
 
 	var that = eventuality({}),
 
