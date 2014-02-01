@@ -1,4 +1,38 @@
+var doorInterface = function (that) {
+	var that = that || {},
+			open = function () {},
+			close = function () {};
 
+	that.open = open;
+	that.close = close;
+
+	return that;		
+};
+
+var abstractState = function (that, my, spec) {
+	my = my || {};
+
+	var that = that || {},
+			entry = function () {},
+			exit = function () {};
+
+	that = doorInterface(that);
+
+	if(spec.name) {
+		my.stateName = spec.name;
+	} else {
+		my.stateName = "Generic";
+	}
+
+	that.entry = entry;
+	that.exit = exit;
+
+	that.getName = function () {
+		return my.stateName;
+	};
+
+	return that;
+};
 
 var genericState = function (my) {
 	my = my || {};
@@ -23,20 +57,22 @@ var genericState = function (my) {
 };
 
 var openState = function (spec, my) {
-	var name = 'Open',
-		that = genericState(my),
-		exit = function () {};
-	// Ajouter l'appel à la super méthode !!! pour surcharger !
+	//var name = 'Open',
+		//that = genericState(my),
+		//exit = function () {};
+	var that = {};
+
+	that = abstractState(that, my, {'name' : 'Open'});
 
 
-	that.exit = exit;
-	that.getName = function () {
-		return name;
-	};
+	//that.exit = exit;
+	//that.getName = function () {
+		//return name;
+	//};
 
 	that.close = function () {
 		if(my.locked === false) {
-			exit();
+			my.state.exit();
 			my.state = my.closedState;
 			my.fire('stateChanged');
 			my.state.entry();
