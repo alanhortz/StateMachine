@@ -15,7 +15,7 @@ var genericState = function (my) {
 	that.close = close;
 	that.open = open;
 
-	that.get_name = function () {
+	that.getName = function () {
 		return name;
 	};
 
@@ -30,7 +30,7 @@ var openState = function (spec, my) {
 
 
 	that.exit = exit;
-	that.get_name = function () {
+	that.getName = function () {
 		return name;
 	};
 
@@ -50,7 +50,7 @@ var closedState = function (spec, my) {
 
 	that.exit = exit;
 
-	that.get_name = function () {
+	that.getName = function () {
 		return name;
 	};
 
@@ -89,7 +89,7 @@ var door = function (spec, my) {
 		};
 
 	that.getStateName = function () {
-		return my.state.get_name();
+		return my.state.getName();
 	};
 	that.close = function () {
 		my.state.close();
