@@ -35,10 +35,12 @@ var openState = function (spec, my) {
 	};
 
 	that.close = function () {
-		exit();
-		my.state = my.closedState;
-		my.fire('stateChanged');
-		my.state.entry();
+		if(my.locked === false) {
+			exit();
+			my.state = my.closedState;
+			my.fire('stateChanged');
+			my.state.entry();
+		}
 	};
 
 	return that;
@@ -97,6 +99,9 @@ var door = function (spec, my) {
 	that.open = function () {
 		my.state.open();
 	};
+	that.isLocked = function() {
+		return my.locked === true;
+	};
 	that.lock = lock;
 	that.unlock = unlock;
 	my.fire = that.fire;
@@ -104,7 +109,7 @@ var door = function (spec, my) {
 	return that;
 };
 
-
+/*
 var myDoor = door();
 
 // Event is the default but Parameters can also be used here with .on('', function (param1,param2) {}, ['value1', 'value2'])
@@ -119,4 +124,4 @@ myDoor.lock();
 myDoor.open();
 myDoor.unlock();
 myDoor.open();
-
+*/
