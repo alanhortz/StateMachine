@@ -4,6 +4,7 @@ describe("A cassette player", function () {
 
     });
   });
+
   describe("when powered up the first time", function () {
     it("is not playing, it is stopped", function () {
 
@@ -15,4 +16,11 @@ describe("A cassette player", function () {
 
     });
   });
+
+  describe("when powered up and the volume button is pushed", function () {
+    it("raises the volume up", function () {
+
+    });
+  });
+
 });
